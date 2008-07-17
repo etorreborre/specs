@@ -25,7 +25,7 @@ import org.specs.ExtendedThrowable._
  * <p>
  * When assertions have been evaluated inside an example they register their failures and errors for later reporting 
  */
-case class Example(var description: String, cycle: org.specs.specification.ExampleLifeCycle) extends Tagged {
+case class Example(description: String, cycle: org.specs.specification.ExampleLifeCycle) {
 
   /** function containing the test to be run */
   private[this] var toRun: () => Any = () => ()
@@ -59,9 +59,6 @@ case class Example(var description: String, cycle: org.specs.specification.Examp
 
   /** @return the subexamples, executing the example if necessary */
   def subExamples = {execute; subExs}
-  
-  /** alias for the <code>in</code> method */
-  def >>(test: => Any) = in(test)
 
   /**
    * creates a new Example object and store as a function the test to be executed. This <code>test</code>
@@ -70,7 +67,7 @@ case class Example(var description: String, cycle: org.specs.specification.Examp
    * Execution will be triggered when requesting status information on that example: failures, errors, assertions number, subexamples
    * @return a new <code>Example</code>
    */
-  def in(test: => Any): Example = {
+  def in (test: => Any): Example = {
     val execution = () => {
       var failed = false
       // try the "before" methods. If there is an exception, add an error and return the current example
@@ -99,11 +96,8 @@ case class Example(var description: String, cycle: org.specs.specification.Examp
       this
     }
     toRun = () => {
-      if (isAccepted) {
-        execution()
-        while (!cycle.until) execution()
-      } else
-        addSkipped(new SkippedException("not tagged for execution"))
+      execution()
+      while (!cycle.until) execution()
     }
     if (cycle.isSequential)
       execute
@@ -117,6 +111,9 @@ case class Example(var description: String, cycle: org.specs.specification.Examp
       executed = true
     }
   }
+  
+  /** alias for the <code>in</code> method */
+  def >> (test: => Any) = in(test)
   
   /** creates and adds a new error from an exception t */
   def addError(t: Throwable) = thisErrors += t

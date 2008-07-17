@@ -2,6 +2,7 @@ package org.specs.matcher
 import org.specs.runner._
 import org.specs.Sugar._
 
+class xmlMatchersTest extends JUnit3(xmlMatchersUnit)
 object xmlMatchersUnit extends MatchersSpecification with XmlMatchers {
   "A equals ignore spaces matcher" should { 
     "not take care of spaces when comparing nodes [Alias ==/]" in {
@@ -122,4 +123,3 @@ object xmlMatchersUnit extends MatchersSpecification with XmlMatchers {
     }
   }
 }
-class xmlMatchersTest extends JUnit4(xmlMatchersUnit)

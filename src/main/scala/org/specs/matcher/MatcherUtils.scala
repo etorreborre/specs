@@ -9,10 +9,7 @@ object MatcherUtils {
   /**
    * @return true if b is matching the regexp a
    */
-  def matches[T <: String](a: String)(b: T) = {
-    try { a != null && b != null && Pattern.compile(a).matcher(b).find }
-    catch { case e: java.util.regex.PatternSyntaxException => false }
-  } 
+  def matches[T <: String](a: String)(b: T) = a != null && b != null && Pattern.compile(a).matcher(b).find 
 
   /**
    * @return true if a string s can be parsed to an integer

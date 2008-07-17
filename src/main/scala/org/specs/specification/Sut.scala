@@ -20,7 +20,7 @@ import org.specs.ExtendedThrowable._
  * In specifications, a Sut "should" or "can" provide some functionalities which are defined in <code>Examples</code><br>
  * A Sut is "executed" during its construction and failures and errors are collected from its examples
  */
-case class Sut(description: String, var cycle: org.specs.specification.ExampleLifeCycle) extends ExampleLifeCycle with Tagged {
+case class Sut(description: String, var cycle: org.specs.specification.ExampleLifeCycle) extends ExampleLifeCycle {
   /** default verb used to define the behaviour of the sut */
   var verb = ""
 
@@ -64,6 +64,12 @@ case class Sut(description: String, var cycle: org.specs.specification.ExampleLi
   /** alternately there may be no example given yet */
   def should(noExampleGiven: Unit) = { verb = "should"; this }
   
+  /** specifies the system with a literal description and embedded assertions */
+  def is(e: => Elem)= {
+      verb = "specifies"
+      literalDescription = Some(e.text)
+  }
+
   /** @return all examples failures */
   def failures = examples.flatMap {_.failures}
 
@@ -104,7 +110,5 @@ case class Sut(description: String, var cycle: org.specs.specification.ExampleLi
     cycle.afterExample(ex)
     after.foreach {_.apply()}
   }
-  /** Declare the examples as components to be tagged when the sut is tagged */
-  override def taggedComponents = this.examples
 }
 

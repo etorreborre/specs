@@ -14,39 +14,34 @@ package org.specs.specification
  * Then StringMatchers are expecting values with String as an upper bound so that effectively only String instances
  * will be used with the implicit def (only solution found to make it all work, to my current understanding again)
  */
-trait AssertFactory extends ExampleAssertionListener {
+trait AssertFactory extends AssertionListener {
 
   /** implicit transformation of a String into an object supporting String matchers */
   implicit def theString[A >: String](value: =>A) = {
-    val a = new AssertString[String](value.toString)
-    addAssertion(Some(a))
-    a
+    addAssertion
+    new AssertString[String](value.toString)
   }
 
   /** implicit transformation of an object into one supporting AnyMatcher matchers */
   implicit def theValue[A](value: =>A) = {
-    val a = new Assert[A](value)
-    addAssertion(Some(a))
-    a
+    addAssertion
+    new Assert[A](value)
   }
 
   implicit def theBlock(value: =>Nothing) = {
-    val a = new Assert[Nothing](value)
-    addAssertion(Some(a))
-    a
+    addAssertion
+    new Assert[Nothing](value)
   }
   /** implicit transformation of an Iterable[String] into an object supporting IterableString matchers */
   implicit def toStringIterableAssert(value: =>Iterable[String]) = {
-    val a = new AssertIterableString(value)
-    addAssertion(Some(a))
-    a
+    addAssertion
+    new AssertIterableString(value)
   }
 
   /** implicit transformation of an Iterable into an object supporting Iterable matchers */
   implicit def toIterableAssert[I <: AnyRef](value: =>Iterable[I]) = {
-    val a = new AssertIterable[I](value)
-    addAssertion(Some(a))
-    a
+    addAssertion
+    new AssertIterable[I](value)
   }
 }
 /** trait declaring the ability to listen to a new assertion */
@@ -55,28 +50,17 @@ trait AssertionListener {
 }
 /** trait doing nothing on a new assertion */
 trait DefaultAssertionListener extends AssertionListener {
-  override def addAssertion: Example = null
-}
-trait DefaultExampleAssertionListener extends ExampleAssertionListener {
-  override def addAssertion: Example = null
-  override def addAssertion[T](assertable: Option[Assertable[T]]): Example = null
-  def lastExample: Option[Example] = None
-  def forExample = null 
+  def addAssertion: Example = null
 }
 /** trait adding the new assertion to an example */
 trait ExampleAssertionListener extends AssertionListener {
 
-  def addAssertion: Example = addAssertion(None)
-  def addAssertion[T](assertable: Option[Assertable[T]]): Example = {
+  def addAssertion: Example = {
     lastExample match {
-      case None => { 
-        val ex = forExample.addAssertion; 
-        assertable.map(setExample(_, ex))
-        ex }
+      case None => forExample.addAssertion
       case Some(e) => e.addAssertion
     }
   }
-  def setExample[T](assertable: Assertable[T], ex: Example) = assertable.setExample(ex)
   def forExample: Example
   def lastExample: Option[Example]
 }
