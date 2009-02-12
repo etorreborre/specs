@@ -39,20 +39,9 @@ trait Reporter extends SpecsHolder with ConsoleLog {
 
   /** this variable controls if stacktraces should be printed. */
   protected var stacktrace = true
-  /** this variable controls if ok examples should be printed. */
-  protected var failedAndErrorsOnly = false
 
   /** allow subclasses to remove the stacktrace display. */
   def setNoStacktrace(): this.type = { stacktrace = false; this }
-  /** allow subclasses to remove the ok and skipped examples. */
-  def setFailedAndErrorsOnly(): this.type = { failedAndErrorsOnly = true; this }
-  /** reset all options. */
-  def resetOptions(): this.type = { 
-    args = Array()
-    stacktrace = true
-    failedAndErrorsOnly = false 
-    this 
-  }
 
   /**
    * optional arguments to be used in the main method and which can be set from the code directly.
@@ -84,8 +73,7 @@ trait Reporter extends SpecsHolder with ConsoleLog {
    * to allow the chaining of several reporters as traits.
    */
   def report(specs: Seq[Specification]): this.type = {
-    if (args.exists(List("-ns", "--nostacktrace").contains(_))) setNoStacktrace()
-    if (args.exists(List("-xOnly", "--failedOnly").contains(_))) setFailedAndErrorsOnly()
+    if (args.exists(List("-ns", "--nostacktrace").contains(_))) setNoStacktrace
     setTags(specs, args)
     this
   }
