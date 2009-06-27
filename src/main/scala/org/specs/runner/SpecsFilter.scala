@@ -91,7 +91,7 @@ trait SpecsFilter extends SpecsHolder {
     if (exampleFilterPattern == ".*") // to speed up the execution
       sus
     else {
-      sus.exampleList_=(sus.examples.flatMap(filterExample(_)).toList)
+      sus.examples_=(sus.examples.flatMap(filterExample(_)).toList)
       sus
     }
   }

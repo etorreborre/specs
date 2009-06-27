@@ -40,11 +40,33 @@ import org.specs.execute._
  * In specifications, a Sus "should" or "can" provide some functionalities which are defined in <code>Examples</code><br>
  * A Sus is "executed" during its construction and failures and errors are collected from its examples
  */
+case class SusWithContext[S](context: SystemContext[S], desc: String, parentSpec: BaseSpecification) extends Sus(desc, parentSpec) {
+  override def createExample(desc: String, lifeCycle: ExampleLifeCycle): Example = {
+    val newContext = context.newInstance
+    val ex = new ExampleWithContext[S](newContext, ExampleDescription(desc), this)
+    addExample(ex)
+    ex
+  }
+  override def beforeExample(ex: Example) = {
+    super.beforeExample(ex)
+    ex.before
+  }
+  override def executeTest(ex: Example, t: =>Any) = {
+    ex.execute(t)
+  }
+  override def afterExample(ex: Example) = {
+    ex.after
+    super.afterExample(ex)
+  }
+  override def cloneExample(e: Example) = {
+    copyDefAndSubExamples(e, ExampleWithContext(context.newInstance, e.exampleDescription, this))
+  }
+} 
 /** support class representing the formatted literate description of a SUS */
 case class LiterateDescription(desc: Node) {
   def toXhtml: NodeSeq = desc
 }
-case class Sus(description: String, parent: BaseSpecification) extends TreeNode with ExampleLifeCycle 
+case class Sus(description: String, parent: BaseSpecification) extends ExampleLifeCycle 
                                       with Tagged with HasResults {
 
   /** default verb used to define the behaviour of the sus */
@@ -60,20 +82,10 @@ case class Sus(description: String, parent: BaseSpecification) extends TreeNode 
     /** @return a String literate description of the sus */
   def literateDescText: String = literateDesc(0).text
   /** examples describing the sus behaviour */
-  var exampleList = List[Example]()
+  var examples = List[Example]()
 
-  def examples = {
-    execute
-    exampleList
-  }
-  /** Return all the examples for this system, including the subexamples (recursively). */
-  def allExamples = examples.flatMap(_.allExamples)
-  
   /** add an example to the list of examples. */
-  def addExample(e: Example) = {
-    addChild(e)
-    exampleList = exampleList ::: List(e)
-  }
+  def addExample(e: Example) = examples = examples ::: List(e)
   
   /** create a new example with a description and add it to the current Sus. */
   def createExample(desc: String, lifeCycle: ExampleLifeCycle) = {
@@ -99,45 +111,32 @@ case class Sus(description: String, parent: BaseSpecification) extends TreeNode 
   var skippedSus: Option[Throwable] = None
   var failedSus: Option[String] = None
   var isSpecified = false
-  private var execution = () => ()
-  private var executed = false
-  private def execute = if (!executed) {
-    executed = true
-    execution()
-  }
   /** default way of defining the behaviour of a sus */
-  def should(ex: =>Any) = {
+  def should(ex: =>Example) = {
     verb = "should"
     specifyExamples(ex)
+    isSpecified = true
     this
   }
   /** header for the full sus description: description + " " + verb */
   def header = description + " " + verb
   
   /** Alias method to describe more advanced or optional behaviour. This will change the verb used to report the sus behavior */
-  def can(ex: =>Any) = { verb = "can"; specifyExamples(ex) }
+  def can(ex: =>Example) = { verb = "can"; specifyExamples(ex) }
 
-  private def specifyExamples(ex: =>Any) = {
-    setExecution(ex)
+  private def specifyExamples(ex: =>Example) = {
+    try { ex } catch {
+      case e: SkippedException => skippedSus = Some(e)
+      case FailureException(m) => failedSus = Some(m)
+    }
     this
   }
 
-  private[specs] def setExecution(a: =>Any): Unit = {
-    execution = () => {
-      parent.setCurrentSus(Some(this))
-      parent.setCurrentExample(None)
-      try { a } catch {
-        case e: SkippedException => skippedSus = Some(e)
-        case FailureException(m) => failedSus = Some(m)
-      }
-      isSpecified = true
-      parent.setCurrentSus(None)
-    }
-  }
   /** alternately there may be no example given yet */
-  def should(noExampleGiven: =>Unit): Unit = { 
+  def should(noExampleGiven: Unit) = { 
     verb = "should"
-    setExecution(noExampleGiven)
+    isSpecified = true
+    this 
   }
   
   /** @return true if there are only successes */
@@ -167,10 +166,6 @@ case class Sus(description: String, parent: BaseSpecification) extends TreeNode 
   /** forwards the call to the "parent" cycle */
   override def until = { parent.until && this.untilPredicate.getOrElse(() => true)() }
 
-  override def setCurrentExample(ex: Option[Example]) = {
-    super.setCurrentExample(ex)
-    parent.setCurrentExample(ex)
-  }
   /** calls the before method of the "parent" cycle, then the sus before method before an example if that method is defined. */
   override def beforeExample(ex: Example) = {
     super.beforeExample(ex)
@@ -210,13 +205,13 @@ case class Sus(description: String, parent: BaseSpecification) extends TreeNode 
     examples.foreach(_.resetForExecution)
     this
   }
-  /** @return the example for a given Activation path */
-  def getExample(path: TreePath): Option[Example] = {
-    path match {
-      case TreePath(i :: rest) => examples(i).getExample(TreePath(rest))
-      case _ => None
-    }
+  /** clone the example, possibly attaching context information. */
+  def cloneExample(e: Example): Example = {
+    copyDefAndSubExamples(e, Example(e.exampleDescription, this))
   }
-
+  def copyDefAndSubExamples(e: Example, cloned: Example) = {
+    e.subExs.foreach { subEx => cloned.addExample(this.cloneExample(subEx)) }
+    e.copyExecutionTo(cloned)
+  }
 }
 

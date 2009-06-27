@@ -30,16 +30,9 @@ trait ExampleLifeCycle {
   def isSequential = sequential
   def setSequential() = sequential = true
 
-  var sus: Option[Sus] = None
-  var example: Option[Example] = None
+  protected[this] var example: Option[Example] = None
   def until = true
-  def setCurrentExample(ex: Option[Example]) = {
-    example = ex
-  }
-  def setCurrentSus(s: Option[Sus]) = {
-    sus = s
-  }
-  def beforeExample(ex: Example) = { setCurrentExample(Some(ex)) }
+  def beforeExample(ex: Example) = { example = Some(ex) }
   def beforeTest(ex: Example)= {}
   def afterTest(ex: Example) = {}
   def executeExample(ex: Example): this.type = { ex.executeThis; this }

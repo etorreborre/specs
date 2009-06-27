@@ -18,7 +18,6 @@
  */
 package org.specs
 import org.specs.runner._
-import org.specs.literate._
 import org.specs.matcher._
 import org.specs.samples._
 import org.specs.mock._
@@ -36,7 +35,6 @@ object allSpecifications extends Specification {
     executeSpecifications,
     formSpecifications,
     ioSpecifications,
-    literateSpecifications,
     matcherSpecifications,
     mockSpecifications,
     samplesSpecifications,
@@ -49,9 +47,7 @@ object allSpecifications extends Specification {
 object allUnits extends Specification {
   "The unit tests" areSpecifiedBy (
 	collectionUnits,
-	formUnits,
 	ioUnits,
-    literateUnits,
 	matcherUnits,
 	mockUnits,
 	runnerUnits,

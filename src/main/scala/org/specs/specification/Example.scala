@@ -45,7 +45,36 @@ import org.specs.execute._
  * <p>
  * When expectations have been evaluated inside an example they register their failures and errors for later reporting
  */
-case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLifeCycle) extends TreeNode with Tagged with DefaultResults {
+case class ExampleWithContext[S](val context: SystemContext[S], var exampleDesc: ExampleDescription, cyc: ExampleLifeCycle) extends Example(exampleDesc, cyc) {
+  override def createExample(desc: String, lifeCycle: ExampleLifeCycle) = {
+    val ex = new ExampleWithContext(context, ExampleDescription(desc), lifeCycle)
+    addExample(ex)
+    ex
+  }
+  override def before = {
+    context.init
+    context.before(context.system)
+  }
+  override def after = {
+    context.after(context.system)
+  }
+  override def execute(t: => Any) = {
+    val test = t
+    var result: Any = test match {
+      case function: Function0[Any] => function()
+      case function: Function1[S, Any] => function(context.system)
+      case function: Function2[S, Context, Any] => function(context.system, context)
+      case _ => test
+    }
+    skipIfNoExpectations()
+    result
+  }
+  /** clone method to create a new example from this one. */
+  override def clone: ExampleWithContext[S] = {
+    copyExecutionTo(ExampleWithContext(context, exampleDesc, cyc))
+  }
+}
+case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLifeCycle) extends Tagged with DefaultResults {
   def this(desc: String, cycle: ExampleLifeCycle) = this(ExampleDescription(desc), cycle)
 
   def description = exampleDescription.toString
@@ -60,35 +89,27 @@ case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLif
   def addExpectation = { expectationsNumber += 1; this }
 
   /** sub-examples created inside the <code>in</code> method */
-  private[specification] var subExs = new Queue[Example]
+  var subExs = new Queue[Example]
 
   /** add a new sub-example to this example */
-  def addExample(e: Example) = {
-    addChild(e)
-    subExs += e
-  }
+  def addExample(e: Example) = subExs += e
   def createExample(desc: String, lifeCycle: ExampleLifeCycle) = {
     val ex = new Example(ExampleDescription(desc), lifeCycle)
     addExample(ex)
     ex
   }
   def copyExecutionResults(other: Example) = {
-    this.hardCopyResults(other)
-    this.subExs = other.subExs
+    this.copyResults(other)
     this.expectationsNumber = other.expectationsNumber
-    other.childNodes.foreach(this.addChild(_))
+    this.subExs = other.subExs
     this.execution.executed = true
   }
 
   /** @return the subexamples, executing the example if necessary */
-  def subExamples = { execute; subExs }
-  /** @return this example if it doesn't have subexamples or return the subexamples */
-  def allExamples: List[Example] = {
-    if (subExs.isEmpty)
-      List(this)
-    else
-      subExs.flatMap(_.allExamples).toList
-  }
+  def subExamples = {execute; subExs}
+
+  /** alias for the <code>in</code> method */
+  def >>[T](expectations: => T) = in(expectations)
   def doTest[T](expectations: => T) = cycle.executeTest(this, expectations)
 
   /** encapsulates the expectations to execute */
@@ -103,23 +124,11 @@ case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLif
    * @return a new <code>Example</code>
    */
   def in(expectations: =>Any): this.type = {
-    setExecution(expectations)
-    this
-  }
-  def in(example: =>Example): Unit = setExecution(example)
-  
-  private def setExecution(a: =>Any): Unit = {
-    execution = new ExampleExecution(this, () => {
-      cycle.setCurrentExample(Some(this))
-      a
-      cycle.setCurrentExample(None)
-    })
+    execution = new ExampleExecution(this, () => expectations)
     if (cycle.isSequential)
       execute
+    this
   }
-  /** alias for the <code>in</code> method */
-  def >>(expectations: =>Any) = in(expectations)
-  def >>(example: =>Example) = in(example)
 
   /** execute the example, checking the expectations. */
   def execute = if (!execution.executed) cycle.executeExample(this)
@@ -132,9 +141,7 @@ case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLif
     executed
   }
   protected def skipIfNoExpectations() = {
-    if (this.expectationsNumber == 0 && 
-          this.subExs.isEmpty && //this.thisSkipped.isEmpty && this.thisFailures.isEmpty && this.thisErrors.isEmpty && 
-          Configuration.config.examplesWithoutExpectationsMustBePending)
+    if (this.expectationsNumber == 0 && this.subExs.isEmpty && Configuration.config.examplesWithoutExpectationsMustBePending)
       throw new SkippedException("PENDING: not yet implemented").removeTracesAsFarAsNameMatches("(specification.Example|LiterateSpecification)")
   }
 
@@ -168,13 +175,14 @@ case class Example(var exampleDescription: ExampleDescription, cycle: ExampleLif
     subExs.foreach(_.resetForExecution)
     this
   }
-  /** @return the example for a given Activation path */
-  def getExample(path: TreePath): Option[Example] = {
-    path match {
-      case TreePath(Nil) => Some(this)
-      case TreePath(i :: rest) if !this.subExamples.isEmpty => this.subExamples(i).getExample(TreePath(rest))
-      case _ => None
-    }
+  /** clone method to create a new example from this one. */
+  override def clone: Example = {
+    copyExecutionTo(Example(exampleDescription, cycle))
+  }
+
+  def copyExecutionTo[E <: Example](e: E): E = {
+    e.execution = new ExampleExecution(e, execution.expectations)
+    e
   }
 }
 /**

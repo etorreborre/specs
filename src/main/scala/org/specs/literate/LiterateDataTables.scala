@@ -22,7 +22,7 @@ import org.specs.specification._
 /**
  * This trait helps declaring datatables inside the Literate Specification
  */
-trait LiterateDataTables extends BaseSpecification with DataTables with ExpectableFactory {
+trait LiterateDataTables extends DataTables with ExpectableFactory with BaseSpecification {
   /**
    * This method allows to embbed a DataTable in a literate specification and display the results of its execution
    */

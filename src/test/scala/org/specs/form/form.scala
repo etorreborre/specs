@@ -32,9 +32,5 @@ object formSpecifications extends Specification {
     new propIterableSpec
   )
 }
-object formUnits extends Specification {
-    "The form unit tests" areSpecifiedBy (
-          new formUnit)
-}
 
 

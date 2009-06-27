@@ -44,8 +44,7 @@ class wikiFormatterSpec extends spex.Specification {
   }
   "A wiki formatter setStatus function" should {
     val exampleDesc = "a description"
-    val example = new Example("a description", this)
-    example.executeThis
+    val example = new Example("a description", this).in { 1 must_== 1 }
     val descWithStatus = new WikiFormatter(){}.setStatus(exampleDesc, List(example))
 
     "set the example status as an xml attribute" in {
@@ -65,8 +64,7 @@ class wikiFormatterSpec extends spex.Specification {
   }
   "A Textile formatter" should { 
     val exampleDesc = "a description"
-    val example = new Example("a description", this)
-    example.executeThis
+    val example = new Example("a description", this).in { 1 must_== 1 }
     val descWithStatus = new TextileFormatter(){}.setStatus(exampleDesc, List(example))
     "enclose the description with ex tags protected by wiki markup" in {
       descWithStatus must beMatching("==\\<ex.*\\>a description\\<\\/ex\\>==")

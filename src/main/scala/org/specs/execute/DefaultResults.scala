@@ -56,11 +56,5 @@ trait DefaultResults extends HasResults {
     other.skipped.foreach(addSkipped(_))
     this
   }
-  def hardCopyResults(other: DefaultResults): this.type = {
-    reset()
-    other.thisFailures.foreach(addFailure(_))
-    other.thisErrors.foreach(addError(_))
-    other.thisSkipped.foreach(addSkipped(_))
-    this
-  }
+  
 }

@@ -17,12 +17,12 @@
  * DEALINGS INTHE SOFTWARE.
  */
 package org.specs.specification
+import org.specs.util.ExtendedString._
 import org.specs.matcher.MatcherUtils._
 import org.specs.SpecUtils._
 import scala.reflect.Manifest
 import org.specs.execute._
-import org.specs.util._
-import org.specs.util.ExtendedString._
+import org.specs.util.Configuration
 /**
  * This trait provides a structure to a specification.<br>
  * A specification is composed of:<ul>
@@ -56,9 +56,9 @@ import org.specs.util.ExtendedString._
  * a test inside an example. This is used to plug setup/teardown behaviour at the sus level and to plug
  * mock expectations checking when a specification is using the Mocker trait: <code>mySpec extends Specification with Mocker</code>
  */
-class BaseSpecification extends TreeNode with SpecificationSystems with SpecificationExecutor with ExampleExpectationsListener with Tagged 
+trait BaseSpecification extends SpecificationSystems with SpecificationExecutor with ExampleExpectationsListener with Tagged 
   with HasResults with LinkedSpecification with SpecificationConfiguration { outer =>
-    
+
   /** description of the specification */
   var description = createDescription(getClass.getName)
 
@@ -118,19 +118,9 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
 
   /** Return all the systems for this specification, including the ones from the sub-specifications (recursively). */
   def allSystems: List[Sus] = {
-    systems ::: subSpecifications.flatMap(_.allSystems)
+    systems ::: subSpecifications.foldRight(Nil: List[Sus]) { (s, result) => s.allSystems ::: result }
   }
-  /** Return all the examples for this specification, including the subexamples (recursively). */
-  def allExamples: List[Example] = {
-    systems.flatMap(_.allExamples) ::: subSpecifications.flatMap(_.allExamples)
-  }
-  /** @return the example for a given Activation path */
-  def getExample(path: TreePath): Option[Example] = {
-    path match {
-      case TreePath(0 :: i :: rest) if systems.size > i => systems(i).getExample(TreePath(rest))
-      case _ => None
-    }
-  }
+
   /**
    * implicit definition allowing to declare a new example described by a string <code>desc</code><br>
    * Usage: <code>"return 0 when asked for (0+0)" in {...}</code><br>
@@ -161,13 +151,13 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
    * It is either the list of examples associated with the current sus, or
    * the list of subexamples of the current example being defined
    */
-  protected[specification] def exampleContainer: Any {def createExample(desc: String, lifeCycle: ExampleLifeCycle): Example} = {
+  protected[this] def exampleContainer: Any {def createExample(desc: String, lifeCycle: ExampleLifeCycle): Example} = {
     example match {
       case Some(e) => e
       case None => currentSus
     }
   }
-  protected[specification] def currentLifeCycle: ExampleLifeCycle = {
+  protected[this] def currentLifeCycle: ExampleLifeCycle = {
     example match {
       case Some(e) => e.cycle
       case None => currentSus
@@ -179,16 +169,14 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
 
   /** the afterAllSystems function will be invoked after all systems */
   var afterSpec: Option[() => Any] = None
-  private[specification] var executeOneExampleOnly = false
+
   /**
    * override the beforeExample method to execute actions before the
    * first example of the first sus
    */
   override def beforeExample(ex: Example) = {
     super.beforeExample(ex)
-    if (!executeOneExampleOnly && 
-          !systems.isEmpty && 
-          !systems.first.examples.isEmpty && systems.first.examples.first == ex)
+    if (!systems.isEmpty && !systems.first.examples.isEmpty && systems.first.examples.first == ex)
       beforeSpec.map(_.apply)
   }
 
@@ -197,15 +185,14 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
    * last example of the last sus
    */
   override def afterExample(ex: Example) = {
-    if (!executeOneExampleOnly && 
-          !systems.isEmpty && !systems.last.examples.isEmpty && systems.last.examples.last == ex)
+    if (!systems.isEmpty && !systems.last.examples.isEmpty && systems.last.examples.last == ex)
       afterSpec.map(_.apply)
     super.afterExample(ex)
   }
   /**
    * add examples coming from another specification
    */
-  def addExamples(examples: List[Example]) = currentSus.exampleList = currentSus.exampleList ::: examples
+  def addExamples(examples: List[Example]) = currentSus.examples = currentSus.examples ::: examples
   
   /** @return true if it contains the specification recursively */
   def contains(s: Any): Boolean = {
@@ -218,15 +205,15 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
    *    behave like "A non-empty stack below full capacity"
    *    ...
    * </code>
-   * In this example we suppose that there is a system under specification with the same name previously defined.
+   * In this example we suppose that there is a system under test with the same name previously defined.
    * Otherwise, an Exception would be thrown, causing the specification failure at construction time.
    */
   object behave {
     def like(other: Sus): Example = {
-      val behaveLike: Example = forExample("behave like " + other.description.uncapitalize)
-      other.examples.foreach { o => 
-        val e = behaveLike.createExample(o.description.toString, behaveLike.cycle)
-        e.execution = o.execution
+      val behaveLike = currentSus.createExample("behave like " + other.description.uncapitalize, currentSus)
+
+      other.examples.foreach { example =>
+         behaveLike.addExample(currentSus.cloneExample(example))
       }
       behaveLike
     }
@@ -270,7 +257,6 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
   override def taggedComponents = this.subSpecifications ++ this.systems
   
   override def toString = name
-  
 }
 /**
  * This trait abstracts the building and storing of the systems of a Specification.
@@ -285,28 +271,21 @@ trait SpecificationSystems { this: BaseSpecification =>
    * Alternatively, it could be created with:
    * <code>specify("my system under test").should {}</code>
    */
+  implicit def specify[S](context: SystemContext[S], desc: String) : Sus = {
+    addSus(new SusWithContext(context, desc, this))
+  }
   implicit def specify(desc: String): Sus = {
     addSus(new Sus(desc, this))
   }
   private[specs] def addSus(sus: Sus): Sus = {
-    addChild(sus)
-    systems = systems ::: List(sus)
+    systems = systems:::List(sus)
     if (this.isSequential)
       systems.last.setSequential
-    sus
+    systems.last
   }
 
   /** utility method to track the last sus being currently defined, in order to be able to add examples to it */
-  protected[this] def currentSus = {
-    sus match {
-      case None => {
-        val s = specify("specifies")
-        setCurrentSus(Some(s))
-        s
-      }
-      case Some(s) => s
-    }
-  }
+  protected[this] def currentSus = if (!systems.isEmpty && !systems.last.isSpecified) systems.last else specify("specifies")
   /**
    * add a textual complement to the sus verb.
    * For example, it is possible to declare:
@@ -357,5 +336,4 @@ trait SpecificationConfiguration { this: BaseSpecification =>
    * variables between them. 
    */
   def shareVariables() = oneSpecInstancePerExample = false
-  def dontShareVariables() = oneSpecInstancePerExample = true
 }

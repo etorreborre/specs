@@ -18,8 +18,11 @@
  */
 package org.spex
 import org.specs.mock.Mockito
-import org.specs.{ Sugar, ScalaCheck }
+import org.specs.{ Sugar, ScalaCheck, SystemContexts }
 import org.specs.runner._
 import org.specs.util.DataTables
 
-class Specification extends org.specs.SpecificationWithJUnit with Mockito with Sugar with DataTables with ScalaCheck with ScalaTest
+class Specification extends org.specs.SpecificationWithJUnit with Mockito with Sugar 
+  with SystemContexts with DataTables with ScalaCheck with ScalaTest {
+
+} 

@@ -146,14 +146,12 @@ class ExamplesTestSuite(description: String, examples: Iterable[Example], skippe
    */
   def initialize = {
     setName(description)
-    examples foreach {  example =>
-      // if the test is run with Maven the sus description is added to the example description for a better
-      // description in the console
-      val exampleDescription = (if (isExecutedFromMaven) (description + " ") else "") + example.description
-      if (example.subExamples.isEmpty)
-        addTest(new ExampleTestCase(example, exampleDescription))
-      else
-        addTest(new ExamplesTestSuite(exampleDescription, example.subExamples, None))
+    examples foreach {
+      example =>
+              // if the test is run with Maven the sus description is added to the example description for a better
+              // description in the console
+              val exampleDescription = (if (isExecutedFromMaven) (description + " ") else "") + example.description
+              addTest(new ExampleTestCase(example, exampleDescription))
     }
   }
 

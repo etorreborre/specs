@@ -95,10 +95,7 @@ class junitTestSuiteSpec extends SpecificationWithJUnit {
   }
   "An example test suite" should {
     "append the description of the sus to the example description if the runner is Maven" in {
-      object s extends Specification {
-        val e = "be ok" in { 1 must_== 1 }
-      }
-      val suite = new ExamplesTestSuite("it should", List(s.e), None) {
+      val suite = new ExamplesTestSuite("it should", List(new Example("be ok", this.systems.first)), None) {
         override lazy val isExecutedFromMaven = true
       }
       suite.tests.first.toString aka "the example description" must include("it should be ok")

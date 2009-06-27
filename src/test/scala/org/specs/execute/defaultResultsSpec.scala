@@ -21,32 +21,32 @@ import org.specs._
 import org.specs.runner._
 import org.specs.specification._
 
-class defaultResultsSpec extends SpecificationWithJUnit {
+class defaultResultsSpec extends SpecificationWithJUnit with SystemContexts {
+  def defaultResults = systemContext { new DefaultResults {} }
   val f = new FailureException("")
   val e = new java.lang.Error("error")
   val s = new SkippedException("skipped")
 
   "An object with results" should {
-    val results = new DefaultResults {}
-    "store failures" in { 
+    "store failures".withA(defaultResults) { results =>
       results.addFailure(f).failures must_== List(f)
     }
-    "store errors" in { 
+    "store errors".withA(defaultResults) { results =>
       results.addError(e).errors must_== List(e)
     }
-    "store skipped" in {
+    "store skipped".withA(defaultResults) { results =>
       results.addSkipped(s).skipped must_== List(s)
     }
-    "have issues if there is at least a failure" in { 
+    "have issues if there is at least a failure".withA(defaultResults) { results =>
       results.addFailure(f).issues must notBeEmpty
     }
-    "have issues if there is at least an error" in { 
+    "have issues if there is at least an error".withA(defaultResults) { results =>
       results.addError(e).issues must notBeEmpty
     }
-    "have issues if there is at least a skipped" in {
+    "have issues if there is at least a skipped".withA(defaultResults) { results =>
       results.addSkipped(s).issues must notBeEmpty
     }
-    "have no more issues when resetted" in { 
+    "have no more issues when resetted".withA(defaultResults) { results =>
       results.addFailure(f).reset().issues must beEmpty
     }
   }

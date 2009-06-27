@@ -23,6 +23,7 @@ import org.specs._
 import org.specs.runner._
 
 class beforeAfterSpec extends SpecificationWithJUnit {
+  shareVariables()
 
   "A specification with before clauses" should {
     "have each example using the doBefore method before being executed" in {
@@ -37,6 +38,7 @@ class beforeAfterSpec extends SpecificationWithJUnit {
     }
     "be executed even if the doBefore clause is not declared inside a sus" in {
       object badSpec extends Specification {
+        shareVariables()
         doBefore {}
       }
       badSpec.isOk must beTrue
@@ -67,6 +69,7 @@ class beforeAfterSpec extends SpecificationWithJUnit {
     }
     "work even if the doAfter clause is not declared inside a sus" in {
       object badSpec extends Specification {
+        shareVariables()
         doAfter {}
       }
       badSpec.isOk must beTrue
@@ -188,12 +191,10 @@ object doAfterExampleFailing extends beforeAfterSpecification {
 }
 object specWithBeforeContext extends beforeAfterSpecification {
   var beforeIsCalled = false
-  val context1 = beforeContext {
-    beforeIsCalled = true 
-  }
+  val context1 = beforeContext(beforeIsCalled = true)
   override def executeSpec = {
     "A specification" ->- context1 should {
-      "have example 1 ok" in { 1 must_== 1 }
+      "have example 1 ok" in { }
     }
     reportSpecs
   }
@@ -224,7 +225,7 @@ object specWithRepeatedContext extends beforeAfterSpecification {
   val context1 = beforeContext(data += 1).until(data == 10)
   override def executeSpec = {
     "A specification" ->- context1 should {
-      "have example 1 ok" in { println(data); 1 must_== 1 }
+      "have example 1 ok" in { }
     }
     reportSpecs
   }
