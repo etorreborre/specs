@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -24,7 +24,7 @@ import org.specs.matcher._
  * 
  * Subclasses include MatcherConstraint (uses a matcher), FunctionConstraint (uses a function), AnyConstraint (uses a blockk.)
  */
-abstract case class Constraint[T]() extends {
+abstract class Constraint[T]() extends {
   def execute(expected: Option[T])
 }
 /**

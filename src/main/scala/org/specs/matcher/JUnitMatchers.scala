@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -19,6 +19,7 @@
 package org.specs.matcher
 import _root_.junit.framework.AssertionFailedError
 import org.specs.specification.{ Result, HasResult }
+import org.specs._
 
 /**
  * This trait provides the possibility to use specs matchers in a JUnit test case.

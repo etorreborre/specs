@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,6 +18,7 @@
  */
 package org.specs.runner
 
+import org.specs._
 import org.specs.specification._
 import _root_.junit.framework._
 import _root_.org.junit.runner._
@@ -104,12 +105,12 @@ trait JUnit extends JUnitSuite with Reporter {
     if (filteredSpecs.size > 1)
       setName(this.getClass.getName.replaceAll("\\$", ""))
     else
-      setName(filteredSpecs.firstOption.map(_.description).getOrElse("no specs"))
+      setName(filteredSpecs.headOption.map(_.description).getOrElse("no specs"))
     filteredSpecs foreach { specification =>
       specification.subSpecifications.foreach(s => addTest(new JUnit3(s)))
       specification.systems foreach { sus => 
         val examples = if (!planOnly() && sus.hasOwnFailureOrErrors) sus :: sus.examples else sus.examples
-        addTest(new ExamplesTestSuite(sus.description + " " + sus.verb, examples, sus.ownSkipped.firstOption))
+        addTest(new ExamplesTestSuite(sus.description + " " + sus.verb, examples, sus.ownSkipped.headOption))
       }
     }
   }

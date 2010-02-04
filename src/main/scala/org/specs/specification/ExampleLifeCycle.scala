@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -98,7 +98,6 @@ trait ExampleLifeCycle extends LifeCycle with ExampleStructure {
   private[specs] var execution: Option[ExampleExecution] = None
   /** @return true if the execution has been executed */
   private[specs] def executed = execution.map(_.executed).getOrElse(true)
-
   /** abstract method (defined in Example) executing the example itself */
   def executeThis: Unit
   /** 

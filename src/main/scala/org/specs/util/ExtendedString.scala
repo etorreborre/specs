@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -26,7 +26,7 @@ object ExtendedString {
   /** This class adds utility functions to Strings */
   case class ExtendedString(s: String) {
     /** @return the String s with its first character being uncapitalized: "HELLO".uncapitalize -> "hELLO" */
-    def uncapitalize = s.first.toLowerCase + s.drop(1)
+    def uncapitalize = s.head.toLower + s.drop(1)
 
     /** 
      * @param remove String to suppress from the original string
@@ -76,7 +76,7 @@ object ExtendedString {
         case Nil => Nil
       }
       if (s.isEmpty) ""
-      else List.toString(s.charAt(0) :: uncamelChars(s.substring(1).toList))
+      else (s.charAt(0) :: uncamelChars(s.substring(1).toList)).mkString("")
     }
   }
 }

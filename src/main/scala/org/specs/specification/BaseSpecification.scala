@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -23,6 +23,7 @@ import scala.reflect.Manifest
 import org.specs.execute._
 import org.specs.util._
 import org.specs.util.ExtendedString._
+import org.specs.Specification
 import org.specs.util.ExtendedThrowable._
 /**
  * This class provides the base structure of a specification.<br>
@@ -54,7 +55,8 @@ import org.specs.util.ExtendedThrowable._
  * </ul>
  */
 class BaseSpecification extends TreeNode with SpecificationSystems with SpecificationExecutor with ExampleExpectationsListener with Tagged 
-  with HasResults with LinkedSpecification with SpecificationConfiguration { outer =>
+  with HasResults with LinkedSpecification with SpecificationConfiguration 
+  with ComposedSpecifications with LazyParameters { outer =>
     
   /** name of the specification */
   var name = createDescription(getClass.getName)
@@ -87,36 +89,25 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
     parentSpecification.map(List(_)).getOrElse(Nil) ::: parentSpecification.map(_.parentSpecifications).getOrElse(Nil)   
   } 
   /** this declares that a specification is composed of other specifications */
-  def isSpecifiedBy(specifications: Specification*) = {
-    this.description = this.name + " is specified by"
+  def isSpecifiedBy(specifications: LazyParameter[Specification]*) = {
+    addToName(" is specified by")
     include(specifications:_*)
   }
   /** alias for isSpecifiedBy */
-  def areSpecifiedBy(specifications: Specification*) = {
-    this.description = this.name + " are specified by"
+  def areSpecifiedBy(specifications: LazyParameter[Specification]*) = {
+    addToName(" are specified by")
     include(specifications:_*)
+  }
+  private def addToName(s: String) {
+    this.description = this.name + s
   }
   /**
    * include a list of specifications inside this one
    */
-  def include(specifications: Specification*) = {
-    val toInclude = specifications.toList.filter((s: Specification) => !(s eq this) && !s.contains(this))
-    toInclude.foreach(_.setParent(this))
-    subSpecifications = subSpecifications ::: toInclude 
-  }
-  /**
-   * implicit definition allowing to declare a composition inside the current specification:
-   * <code>"A complex specification".isSpecifiedBy(spec1, spec2)</code>
-   * It changes the name of this specification with the parameter
-   */
-  implicit def declare(newName: String): ComposedSpecification = { 
-    name = newName
-    new ComposedSpecification(this) 
-  }
-  class ComposedSpecification(s: BaseSpecification) {
-    def isSpecifiedBy(specifications: Specification*) = s.isSpecifiedBy(specifications:_*)
-    def areSpecifiedBy(specifications: Specification*) = s.areSpecifiedBy(specifications:_*)
-    def include(specifications: Specification*) = s.include(specifications:_*)
+  def include(specifications: LazyParameter[Specification]*) = {
+    val toInclude = specifications.toStream.filter((s: LazyParameter[Specification]) => !(s() eq this) && !s().contains(this)).
+                    map { s => s().setParent(this); s() }
+    subSpecifications = subSpecifications ++ toInclude 
   }
   /** @return recursively all the systems included in this specification */
   def allSystems: List[Sus] = {
@@ -191,14 +182,12 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
   /** if this variable is true then the doBeforeSpec block is not executed */
   private[specification] var beforeSpecHasBeenExecuted = false
   /** if this variable is true then the doBeforeSpec block is not executed and the example execution must fail */
-  private[specification] var beforeSpecFailure: Option[FailureException] = None
-  /**
+  private[specification] var beforeSpecFailure: Option[FailureException] = None  /**
    * override the beforeExample method to execute actions before the
    * first example of the first sus
    */
   override def beforeExample(ex: Examples) = {
     beforeSpecFailure.map(throw _)
-    
     if (!executeOneExampleOnly && !beforeSpecHasBeenExecuted) {
       beforeSpecHasBeenExecuted = true
       beforeSpec.map(_.apply)
@@ -212,7 +201,6 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
         }
       }
     }
-    super.beforeExample(ex)
   }
   /**
    * override the afterExample method to execute actions after the
@@ -284,7 +272,23 @@ class BaseSpecification extends TreeNode with SpecificationSystems with Specific
     this
   }
   /** Declare the subspecifications and systems as components to be tagged when the specification is tagged */
-  override def taggedComponents: List[Tagged] = this.systems ++ this.subSpecifications 
+  override def taggedComponents: List[Tagged] = this.systems.toList ::: this.subSpecifications 
   /** @return the name of the specification */
   override def toString = name
+}
+trait ComposedSpecifications extends LazyParameters { this: BaseSpecification =>
+/**
+   * implicit definition allowing to declare a composition inside the current specification:
+   * <code>"A complex specification".isSpecifiedBy(spec1, spec2)</code>
+   * It changes the name of this specification with the parameter
+   */
+  implicit def declare(newName: String): ComposedSpecification = { 
+    name = newName
+    new ComposedSpecification(this) 
+  }
+  class ComposedSpecification(s: BaseSpecification) {
+    def isSpecifiedBy(specifications: LazyParameter[Specification]*) = s.isSpecifiedBy(specifications:_*)
+    def areSpecifiedBy(specifications: LazyParameter[Specification]*) = s.areSpecifiedBy(specifications:_*)
+    def include(specifications: LazyParameter[Specification]*) = s.include(specifications:_*)
+  }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -22,6 +22,7 @@ import org.specs.matcher._
 import org.specs.util._
 import org.specs.form._
 import org.specs.runner._
+import org.specs._
 
 class helloWorld extends HtmlSpecification("Hello World") {
   def greet = "hello"
@@ -141,7 +142,7 @@ trait PersonBusinessEntities {
   }
   case class Address(number: Int, street: String)
 }
-trait PersonForms extends HtmlSpecificationWithJUnit with PersonBusinessEntities {
+class PersonForms extends HtmlSpecificationWithJUnit with PersonBusinessEntities {
 
   case class PersonForm(t: String, p: Person) extends Form(t) {
     def this(p: Person) = this("Customer", p)

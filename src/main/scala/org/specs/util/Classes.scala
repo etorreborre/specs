@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -59,7 +59,9 @@ trait Classes extends ConsoleOutput {
   private[util] def createInstanceOf[T <: AnyRef](c: Option[Class[T]])(implicit m: Manifest[T]) = {
     c match {
       case Some(klass) => {
-        val instance: AnyRef = klass.newInstance
+    	val constructor = klass.getDeclaredConstructors()(0)
+    	constructor.setAccessible(true)
+        val instance: AnyRef = constructor.newInstance().asInstanceOf[AnyRef]
         if (!m.erasure.isInstance(instance)) error(instance + " is not an instance of " + m.erasure.getName)
         Some(instance.asInstanceOf[T])
       }

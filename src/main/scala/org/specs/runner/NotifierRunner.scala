@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,6 +18,8 @@
  */
 package org.specs.runner
 import org.specs.specification._
+import org.specs._
+import org.specs.util.LazyParameter
 
 /**
  * This is a generic trait for defining a notified object which will know about the state of a run.
@@ -30,23 +32,24 @@ trait Notifier {
   def exampleError(testName: String, e: Throwable)
   def exampleSkipped(testName: String)
   def systemStarting(systemName: String)
-  def systemSucceeded(testName: String)
-  def systemFailed(testName: String, e: Throwable)
-  def systemError(testName: String, e: Throwable)
-  def systemSkipped(testName: String)
+  def systemSucceeded(name: String)
+  def systemFailed(name: String, e: Throwable)
+  def systemError(name: String, e: Throwable)
+  def systemSkipped(name: String)
   def systemCompleted(systemName: String)
 }
 /**
  * This reporter reports specification by executing them and specifying the results to Notifiers.
  */
-class NotifierRunner(val specs: Array[Specification], val notifiers: Array[Notifier]) extends Reporter {
+class NotifierRunner(val specifications: Array[Specification], val notifiers: Array[Notifier]) extends Reporter {
+  val specs = specifications.toList
   def this(s: Specification, n: Notifier) = this(Array(s), Array(n))
   override def report(specs: Seq[Specification]): this.type = {
     super.report(specs)
     val specToRun = if (specs.size == 1)
                       specs(0)
                     else {
-                      object totalSpecification extends Specification { include(specs:_*) }
+                      object totalSpecification extends Specification { include(specs.map(s => new LazyParameter(() => s)):_*) }
                       totalSpecification
                     }
     

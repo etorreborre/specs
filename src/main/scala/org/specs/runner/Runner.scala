@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -21,6 +21,7 @@ import org.specs.log.ConsoleLog
 import org.specs.collection.JavaCollectionsConversion
 import _root_.org.junit.runner._
 import org.specs.specification._
+import org.specs.Specification
 
 /**
  * The Runner class is an abstract class referencing one or several specifications to run. It should be extended

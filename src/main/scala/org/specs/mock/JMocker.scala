@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -211,11 +211,6 @@ trait JMocker extends JMockerExampleLifeCycle with HamcrestMatchers with JMockAc
     def matchesSafely(a: T) = true
     def describeTo(d: org.hamcrest.Description) = {}
   }
-  /** always match the parameter */
-  def a[T] = `with`(trueMatcher[T])
-
-  /** always match the parameter */
-  def an[T] = `with`(trueMatcher[T])
 
   /** shortcut for expectations.`with`(new IsNull[T]) */
   def aNull[T](implicit m: Manifest[T]): T  = {expectations.`with`(new IsNull[T]); null.asInstanceOf[T]}
@@ -358,16 +353,16 @@ trait JMocker extends JMockerExampleLifeCycle with HamcrestMatchers with JMockAc
     private var parameterIndex  = 0
 
     /** option mapping function to apply before returning the value */
-    private var function: Option[T => _] = None
+    private var function: Option[T => Any] = None
 
     /** optional matcher checking the captured value */
     private var matcher: Option[HamcrestMatcherAdapter[T]] = None
 
     /** the returned value as a ReturnValueAction object */
-    def value = new ReturnValueAction[T]() {
+    def value = new ReturnValueAction() {
       override def invoke(i: Invocation) = function match {
         case None => i.getParameter(parameterIndex)
-        case Some(f) => f(i.getParameter(parameterIndex).asInstanceOf[T])
+        case Some(f) => f(i.getParameter(parameterIndex).asInstanceOf[T]).asInstanceOf[java.lang.Object]
       }
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -50,7 +50,7 @@ trait BeforeAfter { outer: BaseSpecification =>
   /** this method is added to make sure that expectation declared in beforeSpec blocks are executed right away */
   private def sequentially(actions: =>Any) = {
     val isSeq = isSequential
-    setSequential()
+     setSequential()
     try { actions } finally { sequential = isSeq }
   }
   /** adds a "afterSpec" function to the current specification */
@@ -327,7 +327,7 @@ trait Contexts extends BaseSpecification with BeforeAfter { outer =>
 
 }
 /** 
- * Case class holding before and after functions to be set on a system under test.<p>
+ * class holding before and after functions to be set on a system under test.<p>
  * Context objects are usually created using the factory methods of the Contexts trait:<pre>
  * 
  * // this method returns a context object which can be passed to a System under test (with "a system" ->(context) should {... )
@@ -335,7 +335,7 @@ trait Contexts extends BaseSpecification with BeforeAfter { outer =>
  * beforeContext(initSystem).until(enoughTestsAreExecuted)
  * </pre>
  */
-case class Context() {
+class Context {
   private[specs] var firstActions: () => Any = () => () 
   private[specs] var lastActions: () => Any = () => ()
   private[specs] var beforeActions: () => Any = () => () 

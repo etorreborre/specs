@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -32,7 +32,7 @@ class mockitoUnit extends SpecificationWithJUnit with Mockito {
     "keep its verification mode when appended to another call" in {
       val calls1: MockCallsList = new MockCallsList(scala.List((m1.get(0) on m1).times(2)))
       val calls2: MockCallsList = (m1.get(0) on m1).times(2) then (m2.get(0) on m2).times(3)  
-      calls2.calls.first.verifInOrderMode.toString must_== org.mockito.Mockito.times(2).toString
+      calls2.calls.head.verifInOrderMode.toString must_== org.mockito.Mockito.times(2).toString
       calls2.calls(1).verifInOrderMode.toString must_== org.mockito.Mockito.times(3).toString
     }
   }

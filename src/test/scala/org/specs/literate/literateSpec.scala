@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -79,7 +79,7 @@ h3. Properties
   { """After prompting for a name like {"Peter".a}, the system must greet the visitor with the person name: {"hello Peter".it}{ it must be_==(hello(a)) }""" >@ }
 
 gives:
-   {"<ex class=\"success\">"}After prompting for a name like _{"Peter".a}_, the system must greet the visitor with the person name: _{"hello Peter".it}_{ it must be_==(hello(a)) }{"</ex>"}
+   {"<ex class=\"success\">"}After prompting for a name like _{"Peter".a}_, the system must greet the visitor with the person name: _{"hello Peter".it}_{ it() must be_==(hello(a)) }{"</ex>"}
 
 </t> isSus
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -22,12 +22,12 @@ import org.specs.specification._
 import org.specs.util.Property
 import scala.xml._
 
-trait RunnerFixture extends HtmlSpecificationWithJUnit with RunnerTestData with literate.Html {
+trait RunnerFixture extends RunnerTestData with literate.Html { this: HtmlSpecificationWithJUnit =>
   def createSimpleSpecRunner = runner = simpleSpecRunner
   def executeCompositeSpecRunner = { runner = compositeSpecRunner; executeRunner }
   def executeRunner = { runner.reset; runner.reportSpecs.shh }
   def runnerOutputDir = { runner.setOutputDir _ }
-  def checkXml = XML.loadString(runner.readFile(runner.files.keys.next)) must \\(xml())
+  def checkXml = XML.loadString(runner.readFile(runner.files.keysIterator.next)) must \\(xml())
 
   def checkFilePath = {
     createSimpleSpecRunner

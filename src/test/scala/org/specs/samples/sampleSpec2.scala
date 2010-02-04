@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -22,7 +22,7 @@ import org.specs.specification._
 import org.specs.Sugar._
 import org.specs.runner._
 
-object sampleSpec2 extends Specification {
+object sampleSpecification2 extends Specification {
   "A sample specification2" should {
     "return something" in {
        "hello" mustBe "hello"
@@ -31,7 +31,7 @@ object sampleSpec2 extends Specification {
 }
 
 
-object allSpecififcation extends Specification {
+object allSpecification extends Specification {
   def length11(s: String) = new Specification(s) {
     s should {
       "have 11 characters" in {

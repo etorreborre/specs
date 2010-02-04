@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -142,7 +142,7 @@ class beforeAfterSpec extends SpecificationWithJUnit {
   }
 }
 
-trait beforeAfterSpecification extends Specification with Console with MockOutput with Contexts {
+abstract class beforeAfterSpecification extends Specification with Contexts with Console with MockOutput { 
   shareVariables()
   def execute = { systemsList = Nil; executeSpec }
   def executeSpec

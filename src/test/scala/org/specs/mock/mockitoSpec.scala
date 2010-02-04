@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -22,7 +22,6 @@ import org.specs.literate._
 import org.specs.execute._
 
 class mockitoSpec extends HtmlSpecificationWithJUnit("Mockito Specification") with MockitoSpecification {
-
   <wiki>
 Mockito is a Java library for mocking.
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,7 +20,7 @@ package org.specs.util
 import org.specs.util.Classes._
 import org.specs.specification.BaseSpecification
 
-class classSpec extends spex.Specification {
+class classSpec extends org.spex.Specification {
   "the class name of a full name with package should only return the last name" in {
     className("org.specs.MyName") must_== "MyName"
   }
@@ -36,7 +36,7 @@ class classSpec extends spex.Specification {
   }
   "A tryToCreateObject function" should {
     "try to create an instance using the first available constructor" in {
-      class spec extends spex.Specification
+      class spec extends org.spex.Specification
       val s = new spec
       tryToCreateObject[BaseSpecification](s.getClass.getName, true, true) must not be none
     }

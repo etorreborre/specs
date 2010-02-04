@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -17,7 +17,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 package org.specs.form
-import scala.collection.mutable._
 import scala.xml._
 import org.specs.util.Plural._
 import org.specs.execute.Status
@@ -50,7 +49,7 @@ class SeqForm[T](title: Option[String], val seq: Seq[T]) extends TableForm(title
 trait SeqFormEnabled[T] extends TableFormEnabled {
   val seq: Seq[T]
   /** list of declared lines which are expected but not received as actual */
-  private var unmatchedLines = new ListBuffer[LineForm]
+  private var unmatchedLines = new scala.collection.mutable.ListBuffer[LineForm]
   /** number of already expected lines */
   private var expectedLinesNb = 0
   /** 

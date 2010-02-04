@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -19,6 +19,7 @@
 package org.specs.runner
 import org.specs.Specification
 import org.specs.runner._
+import org.specs._
 
 class specsFilterSpec extends SpecificationWithJUnit {
   "a specs filter" should {
@@ -27,9 +28,9 @@ class specsFilterSpec extends SpecificationWithJUnit {
         "this sus is sus1 and it" should { "have one example" in {} }
         "this sus is sus2 and it" should { "have one example" in {} }
       }
-      val systems = filter(List(spec), ".*sus2.*", ".*").first.systems
+      val systems = filter(List(spec), ".*sus2.*", ".*").head.systems
       systems.size must_== 1
-      systems.first.description must beMatching("sus2")
+      systems.head.description must beMatching("sus2")
     }
     "filter the examples of the specification according to a regular expression" in {
       object spec extends Specification {
@@ -39,15 +40,15 @@ class specsFilterSpec extends SpecificationWithJUnit {
         }
         "this sus is sus2 and it" should { "have one example ex1" in {} }
       }
-      val systems = filter(List(spec), ".*", ".*ex1").first.systems
+      val systems = filter(List(spec), ".*", ".*ex1").head.systems
       systems.size must_== 2
       val s1 = systems(0)
       s1.examples.size must_== 1
-      s1.examples.first.description must beMatching("ex1")
+      s1.examples.head.description must beMatching("ex1")
 
       val s2 = systems(1)
       s2.examples.size must_== 1
-      s2.examples.first.description must beMatching("ex1")
+      s2.examples.head.description must beMatching("ex1")
     }
     "check the patterns for sus and examples" in {
       val filter = new SpecsFilter {

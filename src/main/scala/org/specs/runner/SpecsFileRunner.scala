@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -32,14 +32,14 @@ import org.specs.specification._
  * The systems and examples can also be filtered by specifying patterns. These patterns can be passed as System properties,
  * by specifying -Dsus="regexp" or -Dexample="regexp".
  */
-class SpecsFileRunner(path: String, val specFilterPattern: String, susFilter: String, exampleFilter: String) extends
+class SpecsFileRunner(path: String, val specFilterPattern: String, filterForSus: String, filterForExample: String) extends
   SpecsFinder(path, specFilterPattern, true) with Console {
 
   /** define the sus pattern on the SpecsFilter trait. */
-  override def susFilterPattern = susFilter
+  override def susFilterPattern = filterForSus
 
   /** define the example pattern on the SpecsFilter trait. */
-  override def exampleFilterPattern = exampleFilter
+  override def exampleFilterPattern = filterForExample
 
   /** short constructor with no filter for sus or examples. */
   def this(path: String, specFilterPattern: String) = this(path, specFilterPattern, ".*", ".*")

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -21,7 +21,7 @@ package org.specs.form
 import scala.xml.NodeSeq
 import org.specs.execute._
 import org.specs.matcher._
-import util.Property
+import org.specs.util.Property
 
 /**
  * The Prop class is a named property which holds:<ul>

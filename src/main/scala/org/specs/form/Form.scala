@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,9 +18,8 @@
  */
 package org.specs.form
 
-import matcher.{HaveTheSameElementsAs, BeEqualTo, Matcher, Matchers}
+import org.specs.matcher.{HaveTheSameElementsAs, BeEqualTo, Matcher, Matchers}
 import scala.xml._
-import scala.collection.mutable._
 import scala.collection.mutable.ListBuffer
 import org.specs.xml.NodeFunctions._
 import org.specs.execute._

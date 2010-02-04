@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -29,6 +29,7 @@ import org.mockito.stubbing.{ OngoingStubbing, Stubber }
 import org.mockito.internal.progress._
 import org.specs.matcher._
 import org.specs.matcher.MatcherUtils._
+import org.specs._
 
 /**
  * The Mockito trait can be mixed with Specifications to provide mocking capabilities using the Mockito library.
@@ -88,13 +89,13 @@ trait MockitoLifeCycle extends LifeCycle {
  * mockedList.get(0) was called.once // similar to was called
  * mockedList.get(0) was called.twice
  * mockedList.get(0) was called(3.times)
- * mockedList.get(0) was called.atLeastOnce // or called.atLeast(oncee)
+ * mockedList.get(0) was called.atLeastOnce // or called.atLeast(once)
  * mockedList.get(0) was called.atLeastTwice
  * mockedList.get(0) was called.atLeast(3.times)
  * mockedList.get(0) was called.atMostOnce
  * mockedList.get(0) was called.atMostTwice
  * mockedList.get(0) was called.atMost(3.times)
- * mockedList.get(0) was called.exclusively // equivalent to called(0.timess)
+ * mockedList.get(0) was called.exclusively // equivalent to called(0.times)
  * 
  * </code>
  */
@@ -148,8 +149,8 @@ trait CalledMatchers extends ExpectableFactory with NumberOfTimes with CalledInO
  * This trait provides functions to set the verification mode for InOrder verifications.
  * This means that it only supports AtLeast and Times verification modes.
  */
-trait HasInOrderVerificationMode extends Sugar {
-  
+trait HasInOrderVerificationMode  {
+  import Sugar._
   protected var verificationMode = org.mockito.Mockito.times(1)
   /** verification mode = times(1). This is the default. */
   def once: this.type = this
@@ -173,7 +174,7 @@ trait HasInOrderVerificationMode extends Sugar {
  * This trait provides functions to set the verification mode
  */
 trait HasVerificationMode extends HasInOrderVerificationMode {
-  
+  import Sugar._
   /** verification mode = atMost(1). */
   def atMostOnce: this.type = atMost(1) 
   /** verification mode = atMost(2). */
@@ -303,11 +304,23 @@ trait MockitoStubs extends MocksCreation {
     def returns(t: T, t2: T*): OngoingStubbing[T] = {
       if (t2.isEmpty) 
         mocker.when(c).thenReturn(t)
-      else
-        mocker.when(c).thenReturn(t, t2:_*)
+      else { // written like this to avoid a 2.8 compiler error: "cannot find class manifest for element type of T*"
+    	var stub = mocker.when(c).thenReturn(t)
+    	t2 foreach { x =>
+    		stub = stub.thenReturn(x)
+    	}
+    	stub
+      }
     }
     def answers(function: Any => T) = mocker.when(c).thenAnswer(new MockAnswer(function))
-    def throws[E <: Throwable](e: E*): OngoingStubbing[T] = mocker.when(c).thenThrow(e:_*)
+    def throws[E <: Throwable](e: E*): OngoingStubbing[T] = {
+      if (e.isEmpty) throw new java.lang.IllegalArgumentException("The parameter passed to throws must not be empty")
+      var stub = mocker.when(c).thenThrow(e.head)
+      e.drop(1) foreach { x =>
+    	stub = stub.thenThrow(x)
+      }
+      stub
+    }
   }
   /** @return an object allowing the chaining of returned values on doNothing calls. */
   implicit def aStubber(stub: =>Stubber) = new AStubber(stub)

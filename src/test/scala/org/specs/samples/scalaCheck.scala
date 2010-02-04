@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -24,9 +24,9 @@ import org.specs.matcher._
 
 class stringSpec extends SpecificationWithJUnit("String") with ScalaCheck {
 
-   "startsWith" verifies ((a: String, b: String) => (a + b).startsWith(a)).set(minTestsOk->25)
+   "startsWith" verifies ((a: String, b: String) => (a + b).startsWith(a))
    "endsWith" verifies { (a: String, b: String) => (a + b).endsWith(b) }
-   "concat" verifies { (a: String, b: String) => (a + b).length == a.length + b.length }
+   "concat" verifies { (a: String, b: String) => (a + b).length == (a.length + b.length) }
    "substring" verifies { (a: String, b: String) => (a + b).substring(a.length) == b }
 
 }

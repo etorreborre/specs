@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -42,9 +42,11 @@ trait SpecificationSystems { this: BaseSpecification =>
    * to Strings
    */
   class SpecifiedSus(val sus: Sus) {
-    def should(a: =>Any) = sus.should(a)
+    def should(a: =>Examples) = sus.should(a)
+    def should(a: PrefixedExamples) = sus.should(a)
     def should(a: =>Unit) = sus.should(a)
-    def can(a: =>Any) = sus.can(a)
+    def can(a: =>Examples) = sus.can(a)
+    def can(a: PrefixedExamples) = sus.can(a)
     def can(a: =>Unit) = sus.can(a)
   }
   /**
@@ -68,13 +70,15 @@ trait SpecificationSystems { this: BaseSpecification =>
    * if the following function is declared:
    * <code>def provide = addToSusVerb("provide")</code>
    */
-  def addToSusVerb(complement: String) = new Function1[Example, Example] {
-    def apply(e: Example) = { 
-      current match { 
-        case Some(sus: Sus) => sus.verb += " " + complement 
-        case _ => 
-      }
-      e
-    }
-  }
+  def addToSusVerb(complement: String) = new PrefixedExamples(complement)
+}
+/**
+ * This class represents a list of examples which a prefixed by a common word, like "provide".
+ * 
+ * When passed to the "should" or "can" method of a sus, the prefix is added to the sus verb
+ * to form the expected full verb like "should provide"
+ */
+private [specification] case class PrefixedExamples(prefix: String, example: Option[() => Examples] = None) {
+  def apply(e: =>Examples) = PrefixedExamples(prefix, Some(() => e))
+  def prepend(verb: String) = verb + " " + prefix 
 }

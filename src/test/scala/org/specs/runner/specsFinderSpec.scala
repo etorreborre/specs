@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,6 +20,7 @@ package org.specs.runner
 import org.specs.io.mock.{ MockOutput, MockFileSystem }
 import org.specs.io.ConsoleOutput
 import org.specs.runner._
+import org.specs._
 
 class specsFinderSpec extends SpecificationWithJUnit with Init {
   val finder = new MockFileSystem with SpecificationsFinder with MockOutput
