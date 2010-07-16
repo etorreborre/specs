@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -69,7 +69,7 @@ h3. Prelude
 trait Examples extends SnipIt with Expectations {
   def executeAndExpect(expected: String) = {
     val result = execute(it)
-    result must include(expected)
+    result aka it.get.code must include(expected)
     result
   }
 }

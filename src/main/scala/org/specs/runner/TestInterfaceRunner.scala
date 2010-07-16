@@ -1,26 +1,8 @@
-/**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software. Neither the name of specs nor the names of its contributors may be used to endorse or promote
- * products derived from this software without specific prior written permission.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
 package org.specs.runner
 import org.scalatools.testing._
 import org.specs.util._
+import org.specs._
 import org.specs.util.ExtendedThrowable._
-
 /**
  * Implementation of the Framework interface for the sbt tool.
  * It declares the classes which can be executed by the specs library.
@@ -35,7 +17,7 @@ class SpecsFramework extends Framework {
     def superClassName = "org.specs.Specification"
     def isModule = true
   }
-  def tests = Array[TestFingerprint](specificationClass, specificationObject)
+  def tests = Array[Fingerprint](specificationClass, specificationObject)
   def testRunner(classLoader: ClassLoader, loggers: Array[Logger]) = new TestInterfaceRunner(classLoader, loggers)
 }
 
@@ -96,7 +78,7 @@ class TestInterfaceNotifier(handler: EventHandler, val loggers: Array[Logger], c
   }
   def exampleError(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage + " (" + e.location + ")", AnsiColors.red, " " )
+    logStatus(e.getMessage + " (" + e.location + ")", AnsiColors.red, " ")
     if (configuration.stacktrace) {
       e.getStackTrace().foreach { trace =>
         logStatus(trace.toString, AnsiColors.red, " ")
@@ -117,12 +99,10 @@ class TestInterfaceNotifier(handler: EventHandler, val loggers: Array[Logger], c
   }
   def systemFailed(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage, AnsiColors.red, "  ")
     handler.handle(failure(testName, e))
   }
   def systemError(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage, AnsiColors.red, "  ")
     handler.handle(error(testName, e))
   }
   def systemSkipped(testName: String) = {

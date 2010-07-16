@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -89,7 +89,7 @@ object NodeFunctions {
       case (n1: Atom[_], n2:Text) => n1.text.trim == n2.text.trim
       case (n1: Node, n2:Node) => (isSpaceNode(n1) && isSpaceNode(n2)) ||
                                   n1.prefix == n2.prefix && 
-                                  n1.attributes == n2.attributes && 
+                                  n1.attributes.toSet == n2.attributes.toSet && 
                                   n1.label == n2.label && 
                                   iterableComparison(n1.child.filter(!isSpaceNode(_)), n2.child.filter(!isSpaceNode(_)))
       case (n1: NodeSeq, n2: NodeSeq) => iterableComparison(n1.filter(!isSpaceNode(_)), n2.filter(!isSpaceNode(_)))

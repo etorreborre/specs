@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -24,13 +24,14 @@ import org.specs.util._
 import scala.xml._
 import org.specs.Sugar._
 
-class timerSpecificationSpec extends TimerSpecificationActionWords with Properties {
+class timerSpecificationSpec extends TimerSpecificationActionWords {
   "The timer specification" is <p>
    A Simple timer is an object which can measure time. Let's create a timer.
    When a timer is stopped{stop}, the timer should {"fail to return the elapsed time" in failTime} then
    {"return the elapsed time" in succeeds}
 
-   A person can have its name reset { "Peter" as personName in checkName }
+   A person can have its name reset. If the person's name is set to {"Peter" as personName},
+   then {"the person must be named Peter" in checkName}
 </p>
 }
 

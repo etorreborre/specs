@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -28,5 +28,5 @@ trait LiterateDescriptionFormatter {
   def format(desc: Elem, examples: Iterable[Example]): Node
   def format(desc: Elem): Node = desc
   def formatDesc(example: Example): Node = Text(example.exampleDescription.toString) 
-  def makeExampleDescription(node: NodeSeq): ExampleDescription = ExampleDescription(node.first.text, node.first)
+  def makeExampleDescription(node: NodeSeq): ExampleDescription = ExampleDescription(node.head.text, node.head)
 }

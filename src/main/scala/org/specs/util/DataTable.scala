@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -547,4 +547,4 @@ case class DataRow20[T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,
 /**
  * Extension of a FailureException to allow a better display of this kind of failure (used in HtmlRunner)
  */
-case class DataTableFailureException(val table: ExecutableDataTable) extends FailureException(table.results)
+class DataTableFailureException(val table: ExecutableDataTable) extends FailureException(table.results)

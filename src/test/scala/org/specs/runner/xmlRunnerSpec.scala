@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -19,9 +19,10 @@
 package org.specs.runner
 import org.specs.specification._
 import org.specs.util._
+import org.specs._
 import scala.xml._
 
-class xmlRunnerSpec extends RunnerFixture { "The specification for the XML runner" is <t>
+class xmlRunnerSpec extends HtmlSpecificationWithJUnit with RunnerFixture { "The specification for the XML runner" is <t>
 
   A specification can be run by a XML runner object. The XML runner object is responsible for
   collecting the results of sub-specifications, systems under test and examples and organize
@@ -70,7 +71,7 @@ class xmlRunnerSpec extends RunnerFixture { "The specification for the XML runne
   <li>{ "containing an element for the ko example test containing the exception" in checkXml }</li>
     { xml().toString }<p/>
 
-  { <example expectations="0" failures="0" description="have one sub-example" errors="0">
+  { <example expectations="1" failures="0" description="have one sub-example" errors="0">
           <example expectations="1" failures="0" description="a sub-example" errors="0"></example>
     </example>.as(xml)}
   <li>{ "containing an element for the example containing a sub-example" in checkXml }</li>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,13 +20,13 @@ package org.specs.util
 import org.specs.util.Classes._
 import org.specs.specification.BaseSpecification
 
-class classSpec extends spex.Specification {
-  "the class name of normal class must be returned as is" in {
-    className("MyName") must_== "MyName"
+class classSpec extends org.spex.Specification {
+  "the class name of name should decode the name" in {
+    className("$plus$plus") must_== "++"
   }
   "the class name of an internal class should only return the last name" in {
     class ThisClassName
-    className(classOf[ThisClassName].getName) must_== "ThisClassName"
+    className(classOf[ThisClassName].getSimpleName) must_== "ThisClassName"
   }
   "the class name of an Int should be Integer" in {
     getClassName(1) must_== "Integer"
@@ -44,7 +44,7 @@ class classSpec extends spex.Specification {
   }
   "A tryToCreateObject function" should {
     "try to create an instance using the first available constructor" in {
-      class spec extends spex.Specification
+      class spec extends org.spex.Specification
       val s = new spec
       tryToCreateObject[BaseSpecification](s.getClass.getName, true, true) must not be none
     }

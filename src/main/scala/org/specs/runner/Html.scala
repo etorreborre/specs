@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -24,6 +24,8 @@ import org.specs.util._
 import org.specs.util.ExtendedThrowable._
 import org.specs.xml.NodeFunctions._
 import org.specs.execute._
+import org.specs._
+
 /**
  * The Html trait outputs the results of a specification execution as an html
  * file in a given output directory.
@@ -201,7 +203,7 @@ trait Html extends File {
       NodeSeq.Empty
   }
 
-  def examplesTable(sus: Sus, planOnly: Boolean) = {
+  def examplesTable(sus: Sus, planOnly: Boolean): NodeSeq = {
     sus.literateDescription match {
       case None => {
         <table class="bodyTable">
@@ -286,7 +288,7 @@ trait Html extends File {
    */
   def failure(f: FailureException): NodeSeq = {
     f match {
-      case DataTableFailureException(table) => table.toXhtml
+      case e: DataTableFailureException => e.table.toXhtml
       case regular => exceptionText(regular)
     }
   }

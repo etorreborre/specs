@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -124,9 +124,9 @@ trait Tagged {
 
   /** add the tags specification from another tagged element. This is used when propagating the tags from a specification to a sus for example */
   def tagWith(other: Tagged): this.type = {
-    this.addTags(other.tagList.map(_.name):_*).
-      accept(other.accepted.map(_.name):_*).
-      reject(other.rejected.map(_.name):_*)
+    addTags(other.tagList.map(_.name):_*)
+    acceptTags(other.accepted.map(_.name):_*)
+    rejectTags(other.rejected.map(_.name):_*)
   }
   /** this method should be overriden if the Tagged element has Tagged components which should be tagged when this element is tagged */
   def taggedComponents: Seq[Tagged] = List()

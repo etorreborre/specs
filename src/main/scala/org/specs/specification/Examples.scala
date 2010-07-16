@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -28,7 +28,7 @@ import org.specs.matcher.MatcherUtils._
 import org.specs.SpecUtils._
 import org.specs.specification._
 import org.specs.util.ExtendedThrowable._
-import scala.reflect.Manifest
+import scala.reflect.ClassManifest
 import org.specs.execute._
 
 /**
@@ -92,9 +92,12 @@ abstract class Examples(var exampleDescription: ExampleDescription, val parentCy
   /** @return the example for a given Tree path */
   def getExample(path: TreePath): Option[Examples] = {
     path match {
-      case TreePath(Nil) => Some(this)
-      case TreePath(i :: rest) if !this.examples.isEmpty => this.examples(i).getExample(TreePath(rest))
-      case _ => None
+      case TreePath(List()) => 
+        return Some(this)
+      case TreePath(i :: rest) if !this.examples.isEmpty => 
+        this.examples(i).getExample(TreePath(rest))
+      case _ => 
+        None
     }
   }
   /** 

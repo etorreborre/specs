@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -24,7 +24,7 @@ class eventuallyMatchersSpec extends MatchersSpecification {
     1 must eventually(be(1))
   }
   "matchers can be checked to eventually match after a number of retries" in {
-    val iterator = List(1, 2, 3).elements
+    val iterator = List(1, 2, 3).iterator
     iterator.next must be(3).eventually
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -103,9 +103,10 @@ trait ExampleStructure extends TreeNode with Tagged with DefaultResults {
     other.exampleList.foreach { e => 
       val ex = this.createExample(e.description.toString)
       ex.execution = e.execution
+      ex.execution.map(_.example = ex)
+      ex.execution.map(_.resetForExecution)
       ex.tagWith(e)
       ex.hasSomeSubExamples = e.hasSomeSubExamples
-      ex.execution.map(_.resetForExecution)
     }
     thisExpectationsNumber = other.thisExpectationsNumber
   }

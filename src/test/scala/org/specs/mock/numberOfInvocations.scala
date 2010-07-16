@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -71,7 +71,7 @@ The number of invocations can be checked with different methods on the @called@ 
 { """  new s4 { 
     there was one(m).add("one")
     there were noMoreCallsTo(m)
-  }.failures.first""" snip it }
+  }.failures.head""" snip it }
 { 
   execute(it) must (include("No interactions wanted here") and 
     include("But found this interaction:"))

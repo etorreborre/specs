@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -52,6 +52,7 @@ trait SpecificationExecutor extends LifeCycle { this: BaseSpecification with Exa
               case None => throw PathException(path + "not found for " + example)
               case Some(c) => {
                 c.prepareExecutionContextFrom(example)
+                c.execution.map(_.example = c)
                 c.execution.map(_.execute)
                 example.copyExecutionResults(c)
               }

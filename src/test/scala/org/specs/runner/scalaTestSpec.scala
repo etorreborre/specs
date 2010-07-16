@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -29,7 +29,7 @@ import org.specs.mock.Mockito
 import org.mockito.Mockito._
 import scala.collection.immutable._
 
-class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks {
+class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks with Contexts {
   "A ScalaTest runner" should {
     "create a ScalaTest suite named after the specification description" in {
       val spec = new SimpleSpecification(that.isOk)
@@ -45,7 +45,7 @@ class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks {
       suiteWithGroups.nestedSuites.size must_== 2
     }
     "return groups corresponding to the tags on the specification" in {
-      val first = suiteWithGroups.nestedSuites.first
+      val first = suiteWithGroups.nestedSuites.head
       first.tags must_== Map("have a tag for the second example" -> Set("unit"))
     }
   }
@@ -63,7 +63,7 @@ class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks {
     "use the tags defined on the examples when executing included groups only" in {
       suiteWithGroups.run(None, reporter, stopper, new Filter(Some(Set("unit")), Set()), Map(), None, new Tracker())
       got {
-	    atLeastOne(reporter).apply(any[SuiteStarting])
+        atLeastOne(reporter).apply(any[SuiteStarting])
         one(reporter).apply(any[TestSucceeded]) 
         atLeastOne(reporter).apply(any[SuiteCompleted]) 
 	  }
@@ -71,9 +71,9 @@ class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks {
     "use the tags defined on the examples, and not executing excluded groups" in {
       suiteWithGroups.run(None, reporter, stopper, new Filter(None, Set("functional")), Map(), None, new Tracker())
       got {
-	    atLeastOne(reporter).apply(any[SuiteStarting]) 
-        two(reporter).apply(any[TestSucceeded])
-        atLeastOne(reporter).apply(any[SuiteCompleted])
+        atLeastOne(reporter).apply(any[SuiteStarting]) 
+        two(reporter).apply(any[TestSucceeded]) 
+        atLeastOne(reporter).apply(any[SuiteCompleted]) 
 	  }
     }
   }
@@ -99,7 +99,7 @@ class scalaTestSpec extends SpecificationWithJUnit with ScalaTestMocks {
     }
   }
 }
-trait ScalaTestMocks extends BaseSpecification with Mockito with Contexts {
+trait ScalaTestMocks extends Mockito { this: BaseSpecification with Contexts =>
    var reporter = mock[org.scalatest.Reporter]
    var stopper = mock[org.scalatest.Stopper]
    val c = beforeContext {

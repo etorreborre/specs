@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,6 +18,8 @@
  */
 package org.specs.matcher
 import org.specs.specification._
+import org.specs._
+
 /**
  * This trait provides methods to help the transition for xUnit users
  */
@@ -29,5 +31,5 @@ trait xUnit { self: Specification =>
   def assertNotSame[T](a: =>T, b: =>T) = a mustNotBe b
   def assertNull[T](a: =>T) = a must beNull
   def assertNotNull[T](a: =>T) = a must notBeNull
-  def assertArrayEquals[T](a: =>Array[T], b: =>Array[T]) = a must ((beEqualTo(_:T)).toSeq)(b)
+  def assertArrayEquals[T](a: =>Array[T], b: =>Array[T]) = a.toList must ((beEqualTo(_:T)).toSeq)(b.toList)
 }

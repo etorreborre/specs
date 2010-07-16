@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -21,7 +21,7 @@ import org.specs._
 import org.specs.specification._
 import scala.xml._
 
-class wikiFormatterSpec extends spex.Specification {
+class wikiFormatterSpec extends org.spex.Specification {
   "A wiki formatter" should {
     def formatString(s: String): String = new WikiFormatter(){}.format(s)
     def formatElem(e: Elem): Node = new TextileFormatter(){}.format(e)

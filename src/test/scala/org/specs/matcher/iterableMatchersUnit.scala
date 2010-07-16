@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -80,16 +80,16 @@ class iterableMatchersUnit extends MatchersSpecification {
       ones must containAll(List(1))
     }
     "provide a failure message even for an infinite collection, provided the exist method works ok" in {
-      case class Numbers(first: Int) extends Iterable[Int] {
-        def elements: Iterator[Int] = rest.elements
-        def rest = Numbers(first + 1)
+      case class Numbers(seed: Int) extends Iterable[Int] {
+        def iterator: Iterator[Int] = rest.iterator
+        def rest = Numbers(seed + 1)
         override def exists(f: Int => Boolean) = {
-          if (f(first)) 
+          if (f(seed)) 
             true
           else
             false
         } 
-        override def toString = "Numbers(" + (first to (first + 51)).mkString(", ") + "...)" 
+        override def toString = "Numbers(" + (seed to (seed + 51)).mkString(", ") + "...)" 
       }
       lazy val fromTwo = Numbers(3);
       { fromTwo must containAll(List(1, 2)); "" } must throwA[org.specs.execute.FailureException]
@@ -103,5 +103,6 @@ class iterableMatchersUnit extends MatchersSpecification {
       import org.specs.Sugar._
       Group(<test></test><secondtest></secondtest>) must have size(2)
     }
+
   }
 }

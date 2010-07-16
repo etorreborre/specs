@@ -18,6 +18,7 @@
  */
 package org.specs.runner
 
+import org.specs._
 import org.specs.specification._
 import _root_.junit.framework._
 import _root_.org.junit.runner._
@@ -104,7 +105,7 @@ trait JUnit extends JUnitSuite with Reporter with ExtendedJUnitSuite {
     if (filteredSpecs.size > 1)
       setName(this.getClass.getName.replaceAll("\\$", ""))
     else
-      setName(filteredSpecs.firstOption.map(_.description).getOrElse("no specs"))
+      setName(filteredSpecs.headOption.map(_.description).getOrElse("no specs"))
     filteredSpecs foreach { specification =>
       specification.subSpecifications.foreach(s => addTest(new JUnit3(s)))
       specification.systems foreach { sus => 
@@ -112,7 +113,7 @@ trait JUnit extends JUnitSuite with Reporter with ExtendedJUnitSuite {
 		if (sus.isAnonymous)
 		  examples foreach { e => this.addExample(e, "") }
 		else
-		  addTest(new ExamplesTestSuite(sus.description + " " + sus.verb, examples, sus.ownSkipped.firstOption))
+		  addTest(new ExamplesTestSuite(sus.description + " " + sus.verb, examples, sus.ownSkipped.headOption))
       }
     }
   }

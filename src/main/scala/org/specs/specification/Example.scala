@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -28,7 +28,7 @@ import org.specs.matcher.MatcherUtils._
 import org.specs.SpecUtils._
 import org.specs.specification._
 import org.specs.util.ExtendedThrowable._
-import scala.reflect.Manifest
+import scala.reflect.ClassManifest
 import org.specs.execute._
 
 /**
@@ -62,7 +62,7 @@ class Example(var exampleDesc: ExampleDescription, private var p: Option[Example
    * @return a new <code>Example</code>
    */
   /** this version of in allows to declare examples inside examples */
-  def in[T](expectations: =>T)(implicit m: scala.reflect.Manifest[T]): this.type = {
+  def in[T](expectations: =>T)(implicit m: scala.reflect.ClassManifest[T]): this.type = {
     specifyExample(expectations)
     if (m.erasure == this.getClass)
       hasSomeSubExamples = true
@@ -70,7 +70,7 @@ class Example(var exampleDesc: ExampleDescription, private var p: Option[Example
   }
 
   /** alias for the <code>in</code> method to create subexamples */
-  def >>[T](expectations: =>T)(implicit m: scala.reflect.Manifest[T]) = in(expectations)
+  def >>[T](expectations: =>T)(implicit m: scala.reflect.ClassManifest[T]) = in(expectations)
   /**
    * when an example has been executed in another specification to guarantee its isolation
    * copy its state

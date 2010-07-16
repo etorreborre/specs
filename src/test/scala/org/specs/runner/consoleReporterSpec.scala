@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -81,8 +81,8 @@ class reporterSpecification extends TestSpecs {
     }
     "display the failure message next to the corresponding example" in {
       specWithTwoExamples(that.isKo, that.isOk) verifies(messages =>
-            messages.findIndexOf(matches("first failure")) ==
-            messages.findIndexOf(matches("example 2.1 ok")) + 1)
+            messages.indexWhere(matches("first failure")) ==
+            messages.indexWhere(matches("example 2.1 ok")) + 1)
     }
     "display nested examples in the right order" in {
       specWithOneExampleAndTwoNestedExamples verifies(messages =>
@@ -234,7 +234,7 @@ class specWithTags extends Specification {
 abstract class TestSpecification extends org.specs.Specification with Expectations with MockOutput {
   override val specs = List(this)
 }
-trait Expectations extends org.specs.Specification {
+trait Expectations  { this: org.specs.Specification =>
   val success = () => true mustBe true
   val isSkipped = () => skip("irrelevant")
   val isSkippedBecauseOfAFaultyMatcher = () => 1 must be(0).orSkipExample

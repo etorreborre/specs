@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007-2010 Eric Torreborre <etorreborre@yahoo.com>
+ * Copyright (c) 2007-2009 Eric Torreborre <etorreborre@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -51,6 +51,7 @@ trait OutputReporter extends Reporter with Output {
   def infoColored(text: String) =
     if (colorize()) AnsiColors.blue + text + AnsiColors.reset
     else text
+
 
   /** the timer is used to display execution times */
   val timer: Timer
@@ -124,7 +125,7 @@ trait OutputReporter extends Reporter with Output {
    */
   def stats(example: Example): (Int, Int, Int, Int, Int) = {
     if (!planOnly()) {
-     (if (example.examples.isEmpty) 1 else 0, example.expectationsNb, example.failures.size, example.errors.size, example.skipped.size) +
+     (if (example.examples.isEmpty) 1 else 0, example.ownExpectationsNb, example.ownFailures.size, example.ownErrors.size, example.ownSkipped.size) +
      example.examples.foldLeft((0, 0, 0, 0, 0))(_ + stats(_))
     } else
      (1, 0, 0, 0, 0)
@@ -160,7 +161,7 @@ trait OutputReporter extends Reporter with Output {
    * prints one sus specification
    */
   def printSus(sus: Sus, padding: String) = {
-    var susDescription = if (sus.isAnonymous) "" else sus.description + " " + sus.verb
+    var susDescription = if (sus.isAnonymous) "" else sus.header
 
     if (!sus.literateDesc.isEmpty) 
       println(padding + sus.literateDescText)
@@ -253,7 +254,7 @@ trait OutputReporter extends Reporter with Output {
   private def canReport(hasResults: HasResults) = {
     !failedAndErrorsOnly() || failedAndErrorsOnly() && hasResults.hasFailureOrErrors
   }
-} 
+}
 
 /**
  * Implementation of the <code>OutputReporter</code> with a <code>ConsoleOutput</code>
