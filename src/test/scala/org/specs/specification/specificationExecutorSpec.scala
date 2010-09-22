@@ -19,8 +19,9 @@
 package org.specs.specification
 import org.specs.util.Configuration
 import org.specs.runner._
+import org.specs.Specification
 
-class specificationExecutorSpec extends spex.Specification {
+class specificationExecutorSpec extends org.spex.Specification {
   "An executed specification, with one spec instance per example" should {
     "execute examples only once" in {
       specWithCountedExamples.failures // execute the specification
@@ -52,7 +53,7 @@ class specificationExecutorSpec extends spex.Specification {
     }
   }
 }
-object specWithCountedExamples extends spex.Specification {
+object specWithCountedExamples extends org.spex.Specification {
   "first ex" in {
     1 must_== 1
     examplesExecutionCounter.nb += 1
@@ -62,7 +63,7 @@ object specWithCountedExamples extends spex.Specification {
     examplesExecutionCounter.nb += 1
   }
 }
-object specificationWithASharedVariable extends spex.Specification {
+object specificationWithASharedVariable extends org.spex.Specification {
   var i = 0
   "When executing each example, a shared variable" should {
     "be set to its initial value: 0" in { i must_== 0; i = i + 1 }
@@ -76,7 +77,7 @@ object specificationWithASharedVariable extends spex.Specification {
 object examplesExecutionCounter {
   var nb = 0
 }
-object specificationWithChangedConfiguration extends spex.Specification {
+object specificationWithChangedConfiguration extends org.spex.Specification {
   shareVariables()
   var i = 0
   "When executing each example with shareVariables(), a shared variable" should {
@@ -84,7 +85,7 @@ object specificationWithChangedConfiguration extends spex.Specification {
     "be incremented by the first example" in { i must_== 1 }
   }
 }
-object specificationWithMockito extends spex.Specification {
+object specificationWithMockito extends org.spex.Specification {
   var l = mock[java.util.List[String]]
   "When using the Mockito trait" should {
     "mocks should be setup ok" in { 
@@ -93,27 +94,27 @@ object specificationWithMockito extends spex.Specification {
     }
   }
 }
-object specificationWithANestedSpecification extends spex.Specification {
+object specificationWithANestedSpecification extends org.spex.Specification {
   "When executing a specification with a nested spec, there" should {
     "be no instantiation issue" in { 0 must_== 0 }
   }
-  object s1 extends spex.Specification {
+  object s1 extends org.spex.Specification {
     0 must_== 0
   }
   include(s1)
 }
-object specificationWithANestedCaseClassSpecification extends spex.Specification {
+object specificationWithANestedCaseClassSpecification extends org.spex.Specification {
   "When executing a specification with a case spec, there" should {
     "be no instantiation issue" in { 0 must_== 0 }
   }
-  case class caseClassSpecification() extends spex.Specification {
+  case class caseClassSpecification() extends org.spex.Specification {
     "When executing a specification with a case spec, there" should {
       "be no instantiation issue" in { 0 must_== 0 }
     }
   }
   include(new caseClassSpecification)
 }
-object specificationWithSubexamples extends spex.Specification {
+object specificationWithSubexamples extends org.spex.Specification {
   "execute all subexamples" should {
     "ex" in {
       "subex1" in {

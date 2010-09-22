@@ -37,7 +37,7 @@ class haveMatcherSpec extends SpecificationWithJUnit { outer =>
   "A collection matcher starting with 'notHave' can be used with 'not have' as a separated words" in {
     List(1) must not have(size(2))
   }
-  
+
   def possibly[T] = new PossiblyMatcher[T]
   class PossiblyMatcher[T] extends Matcher[T] { 
     def apply(v: =>T) = (true, "", "")

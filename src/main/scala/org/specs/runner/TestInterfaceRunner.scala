@@ -19,8 +19,8 @@
 package org.specs.runner
 import org.scalatools.testing._
 import org.specs.util._
+import org.specs._
 import org.specs.util.ExtendedThrowable._
-
 /**
  * Implementation of the Framework interface for the sbt tool.
  * It declares the classes which can be executed by the specs library.
@@ -35,7 +35,7 @@ class SpecsFramework extends Framework {
     def superClassName = "org.specs.Specification"
     def isModule = true
   }
-  def tests = Array[TestFingerprint](specificationClass, specificationObject)
+  def tests = Array[Fingerprint](specificationClass, specificationObject)
   def testRunner(classLoader: ClassLoader, loggers: Array[Logger]) = new TestInterfaceRunner(classLoader, loggers)
 }
 
@@ -96,7 +96,7 @@ class TestInterfaceNotifier(handler: EventHandler, val loggers: Array[Logger], c
   }
   def exampleError(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage + " (" + e.location + ")", AnsiColors.red, " " )
+    logStatus(e.getMessage + " (" + e.location + ")", AnsiColors.red, " ")
     if (configuration.stacktrace) {
       e.getStackTrace().foreach { trace =>
         logStatus(trace.toString, AnsiColors.red, " ")
@@ -117,12 +117,10 @@ class TestInterfaceNotifier(handler: EventHandler, val loggers: Array[Logger], c
   }
   def systemFailed(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage, AnsiColors.red, "  ")
     handler.handle(failure(testName, e))
   }
   def systemError(testName: String, e: Throwable) = {
     logStatus(testName, AnsiColors.red, "x")
-    logStatus(e.getMessage, AnsiColors.red, "  ")
     handler.handle(error(testName, e))
   }
   def systemSkipped(testName: String) = {

@@ -46,7 +46,7 @@ class notifierSpec extends SpecificationWithJUnit with Mockito {
       there was one(notifier).exampleFailed("ex1-2", new FailureException("wrong"))
     }
     "the error of an example" in {
-      there was one(notifier).exampleError(is_==("ex2-2"), is_==("bad") ^^ ((_.getMessage)))
+      there was one(notifier).exampleError(is_==("ex2-2"), is_==("bad") ^^ ((e:Throwable) => e.getMessage))
     }
     "a skipped example" in {
       there was one(notifier).exampleSkipped("ex2-3")
@@ -87,7 +87,7 @@ class notifierSpec extends SpecificationWithJUnit with Mockito {
     "system1"  should {
       "ex1-1" in { 1 must_== 1 }
       "ex1-2" in { fail("wrong") }
-      fail("sus failed")
+      fail("sus failed"); ()
     }
     "system2"  should {
       "ex2-1" in { 1 must_== 1 }

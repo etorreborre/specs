@@ -20,6 +20,7 @@ package org.specs.specification
 import org.specs.specification
 import org.specs.io.mock._
 import org.specs.Sugar._
+import org.specs._
 
 class beforeAfterUnit extends SpecificationWithJUnit {
   "A specification with 2 expectations in the doBefore clause must fail all examples if the expectations are wrong" in {

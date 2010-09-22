@@ -28,8 +28,7 @@ object ExtendedThrowable {
   /**
    * Implicit method to add additional methods to Throwable objects
    */
-  implicit def toExtendedThrowable[T <: Throwable](t: T) = new ExtendedThrowable(t)
-  
+  implicit def toExtendedThrowable[T <: Throwable](t: T) = new ExtendedThrowable(t)  
   /**
    * See the ExtendedThrowable object description
    */

@@ -1,9 +1,7 @@
 import sbt._
-import webbytest.HtmlTestsProject
 
-class Project(info: ProjectInfo) extends DefaultProject(info) with HtmlTestsProject {
-
-  val mavenLocal = "Local Maven Repository" at "file:///D:/mvn-repository"
+class Project(info: ProjectInfo) extends DefaultProject(info) {
+  val mavenLocal = "Local Maven Repository" at "file://D:/mvn-repository"
   override def outputDirectoryName = "build"
   override def managedDependencyPath = "project" / "lib_managed"
   override def compileOptions = Unchecked :: super.compileOptions.toList
@@ -13,27 +11,29 @@ class Project(info: ProjectInfo) extends DefaultProject(info) with HtmlTestsProj
   val junit 		= "junit" % "junit" % "4.5"
   val wikitext 		= "org.eclipse.mylyn.wikitext" % "wikitext" % "0.9.4.I20090220-1600-e3x" 
   val wikitextile 	= "org.eclipse.mylyn.wikitext" % "wikitext.textile" % "0.9.4.I20090220-1600-e3x" 
-  val scalatest 	= "org.scalatest" % "scalatest" % "1.0"
-  val scalacheck 	= "org.scala-tools.testing" %% "scalacheck" % "1.6" 
-  val jmock 		= "org.jmock" % "jmock" % "2.4.0" 
+  val scalatest 	= "org.scalatest" % "scalatest" % "1.2-for-scala-2.8.0.final-SNAPSHOT"
+  val scalacheck 	= "org.scala-tools.testing" % "scalacheck_2.8.0" % "1.7" 
+  val testinterface = "org.scala-tools.testing" % "test-interface" % "0.5" 
+  val jmock 		= "org.jmock" % "jmock" % "2.5.1" 
+  val jmocklegacy  = "org.jmock" % "jmock-legacy" % "2.5.1" 
   val easymock 		= "org.easymock" % "easymock" % "2.5.1" 
   val easymockclass	= "org.easymock" % "easymockclassextension" % "2.4" 
   val mockito 		= "org.mockito" % "mockito-all" % "1.8.4" 
   val cglib 		= "cglib" % "cglib" % "2.1_3"  
   val cglibnodep	= "cglib" % "cglib-nodep" % "2.1_3"  
   val objenesis 	= "org.objenesis" % "objenesis" % "1.0"
-  val testInterfaces = "org.scala-tools.testing" % "test-interface" % "0.2"
+
 
   val scriptapi 	= "javax.script" % "script-api" % "1.0"
   val scriptjs   	= "javax.script" % "script-js" % "1.0"
   val jsengine  	= "javax.script" % "js-engine" % "1.0"
 
-  //override def crossScalaVersions = List("2.7.7")
+  override def crossScalaVersions = List("2.8.0")
 
-  val publishTo = "Scala Tools Nexus" at "http://nexus-direct.scala-tools.org/content/repositories/snapshots/"
+  override def managedStyle = ManagedStyle.Maven
+  val publishTo = "Scala Tools Nexus" at "http://nexus-direct.scala-tools.org/content/repositories/releases/"
   Credentials(Path.userHome / ".ivy2" / ".credentials", log)
 
-  val snapshotsRepo = Resolver.url("snapshots-repo", new java.net.URL("http://nexus-direct.scala-tools.org/content/repositories/snapshots"))
-  val specsRepo = Resolver.url("specs-repo", new java.net.URL("http://specs.googlecode.com/svn/maven2"))
-
+  val snapshotsRepo = "snapshots-repo" at "http://nexus.scala-tools.org/content/repositories/snapshots"
+  val specsRepo = "specs-repo" at "http://specs.googlecode.com/svn/maven2"
 }

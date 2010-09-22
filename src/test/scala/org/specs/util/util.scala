@@ -25,11 +25,13 @@ object utilSpecifications extends Specification {
         new configurationSpec,
         new controlSpec,
         new editDistanceSpec,
+		new extendedFunctionSpec,
 		new extendedStringSpec,
         new includeExcludeSpec,
+        new lazyParamSpec,
         new matchingSpec,
         new propertySpec,
-     //   new scalaInterpreterSpec,
+        (new scalaInterpreterSpec).tag("slow"),
         new timeSpec,
         new timerSpec
     )
