@@ -1,6 +1,16 @@
-======================================
+==================================
+DEPRECATED!!!
+
+This project is just kept here for historical reasons after the shutdown of 
+the original site at https://code.google.com/p/specs.
+
+The specs library has been replaced by [specs2](http://github.com/etorreborre/specs2).
+
+==================================
+
+-------------------------
 Installation instructions
-======================================
+-------------------------
 
 You need to download and install Maven 2.0.9.
 Then execute the following command:
